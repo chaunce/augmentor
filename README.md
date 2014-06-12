@@ -52,10 +52,11 @@ or add it to your Gemfile
     
     end
 
-##### augmentor associations accepts many ActiveRecord association options, but will only associate one level deep and can not use :through
+##### Notes
 
-class User < ActiveRecord::Base
-  augmented_by :individual, class_name: :person, inverse_of: :user
+augmentor associations accepts many ActiveRecord association options, but will only associate one level deep and can not use :through
 
-end
-
+    class User < ActiveRecord::Base
+      augmented_by :individual, class_name: :person, inverse_of: :user
+      
+    end
