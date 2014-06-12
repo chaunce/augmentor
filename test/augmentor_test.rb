@@ -1,10 +1,14 @@
 require File.expand_path('../test_helper', __FILE__)
 
 class AugmentorTest < Test::Unit::TestCase
-  def setup
+  def test_setup
     @name = 'John Doe'
     @password = 'p@$$w0rd'
     @login = 'john'
+    @duplicate = 'duplicate'
+  end
+
+  def setup
     @user_count = User.count
     @person_count = Person.count
   end
@@ -29,6 +33,37 @@ class AugmentorTest < Test::Unit::TestCase
     assert_equal @name, Person.last.attributes['name']
     assert_equal @login, User.last.attributes['login']
     assert_equal @password, User.last.attributes['password']
+  end
+  
+  def test_duplicate_augmentor_attributes_are_ignored
+    user = User.new
+    user.name = @name
+    user.login = @login
+    user.password = @password
+    user.duplicate = @duplicate
+    user.save!
+
+    user = User.find(user.id)
+    person = Person.find(user.person.id)
+    assert_equal @name, person.attributes['name']
+    assert_nil person.attributes['duplicate']
+    assert_equal @login, user.attributes['login']
+    assert_equal @password, user.attributes['password']
+    assert_equal @duplicate, user.attributes['duplicate']
+
+    person.duplicate = 'different'
+    person.save!
+    user = User.find(user.id)
+    person = Person.find(user.person.id)
+    assert_equal 'different', person.attributes['duplicate']
+    assert_equal @duplicate, user.attributes['duplicate']
+
+    user.duplicate = 'changed'
+    user.save!
+    user = User.find(user.id)
+    person = Person.find(user.person.id)
+    assert_equal 'different', person.attributes['duplicate']
+    assert_equal 'changed', user.attributes['duplicate']
   end
 
   def test_destroy_augmented_will_destroy_augmentor

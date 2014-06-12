@@ -12,10 +12,12 @@ ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":me
 ActiveRecord::Schema.define(:version => 1) do
   create_table :people do |t|
     t.string :name
+    t.string :duplicate
     t.augment :user
   end
   create_table :users do |t|
     t.string :login
+    t.string :duplicate
     t.string :password
   end
 end
