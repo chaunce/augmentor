@@ -24,6 +24,7 @@ end
 
 class Person < ActiveRecord::Base
   augment :user
+  validates_presence_of :name
 
   def is_bob?
     self.name == 'bob'
@@ -32,6 +33,14 @@ class Person < ActiveRecord::Base
   def is_jim?
     self.name == 'jim'
   end
+
+  def self.find_bobs
+    where(name: 'bob')
+  end
+
+  def self.find_jims
+    where(name: 'jim')
+  end
 end
 
 class User < ActiveRecord::Base
@@ -39,5 +48,9 @@ class User < ActiveRecord::Base
 
   def is_bob?
     ['robert', 'rob', 'bob'].include?(self.name)
+  end
+
+  def self.find_bobs
+    joins(:person).where(people: {name: ['robert', 'rob', 'bob']})
   end
 end
